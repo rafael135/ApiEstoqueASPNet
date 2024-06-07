@@ -1,0 +1,6 @@
+@ApiEstoqueASP_HostAddress = http://localhost:5217
+
+GET {{ApiEstoqueASP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
