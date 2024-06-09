@@ -14,4 +14,6 @@ public class CreateProductDto
 
     [Required]
     public double Price { get; set; }
+
+    public double InStock { get; set; } = 0;
 }

@@ -53,7 +53,11 @@ namespace ApiEstoqueASP
                 .AddEntityFrameworkStores<ApiEstoqueDbContext>()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            builder.Services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -62,8 +66,8 @@ namespace ApiEstoqueASP
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        //ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                        //ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
                         ClockSkew = TimeSpan.Zero
                     };
@@ -81,12 +85,12 @@ namespace ApiEstoqueASP
             #endregion
 
             #region Services
-                //builder.Services.AddScoped<IUserService, UserService>();
+                builder.Services.AddScoped<IUserService, UserService>();
                 builder.Services.AddScoped<ITokenService, TokenService>();
                 builder.Services.AddScoped<IProductService, ProductService>();
                 builder.Services.AddScoped<IOrderService, OrderService>();
                 builder.Services.AddScoped<IUserService, UserService>();
-                //builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+                builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
             #endregion
 
 
@@ -151,7 +155,7 @@ namespace ApiEstoqueASP
             app.MapControllers();
 
             // Função para criar roles e usuários de teste
-            //CreateInitialUsers(app).GetAwaiter().GetResult();
+            CreateInitialUsers(app).GetAwaiter().GetResult();
 
             app.Run();
         }

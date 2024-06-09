@@ -22,7 +22,7 @@ namespace ApiEstoqueASP.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "User")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetOrderById(int id)
         {
@@ -38,7 +38,7 @@ namespace ApiEstoqueASP.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "User")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public IActionResult CreateOrder([FromBody] CreateOrderDto dto)
         {

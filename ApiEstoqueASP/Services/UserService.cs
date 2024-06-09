@@ -54,10 +54,12 @@ public class UserService : IUserService
 
     public async Task<User?> Login(LoginUserDto dto)
     {
+        Console.WriteLine($"{dto.Email}, {dto.Password}");
+
         User user = _signInManager
             .UserManager
             .Users
-            .FirstOrDefault(user => user.NormalizedEmail == dto.Email.ToUpper());
+            .FirstOrDefault(user => user.Email.Equals(dto.Email));
 
         if (user == null)
         {

@@ -7,20 +7,19 @@ using System.Net.Http.Json;
 
 namespace ApiEstoqueASP.Integration.Test
 {
-    public class TestAuthRegister : IDisposable
+    public class AuthRegister : IClassFixture<ApiEstoqueASPFactory>, IDisposable
     {
-        
-        public TestAuthRegister()
+        private readonly ApiEstoqueASPFactory _app;
+        public AuthRegister()
         {
-            
+            this._app = new ApiEstoqueASPFactory();
         }
 
         [Fact]
         public async Task POST_Register_Route_Returns_Created()
         {
             // Arrange
-            var app = new ApiEstoqueASPFactory();
-            HttpClient client = app.CreateClient();
+            HttpClient client = this._app.CreateClient();
 
             var data = new CreateUserDto()
             {
@@ -43,8 +42,7 @@ namespace ApiEstoqueASP.Integration.Test
         public async Task POST_Register_Route_Returns_BadRequest()
         {
             // Arrange
-            var app = new ApiEstoqueASPFactory();
-            HttpClient client = app.CreateClient();
+            HttpClient client = this._app.CreateClient();
 
             var user = new CreateUserDto()
             {

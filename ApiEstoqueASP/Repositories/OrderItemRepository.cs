@@ -16,12 +16,15 @@ namespace ApiEstoqueASP.Repositories
 
         public override OrderItem Add(OrderItem entity)
         {
-            int inStock = this._productRepository.GetProductById(entity.ProductId).InStock;
+            Product product = this._productRepository.GetProductById(entity.ProductId);
 
-            if(inStock - entity.Quantity < 0)
+            if (product is null || product.InStock - entity.Quantity < 0)
             {
                 return null;
             }
+
+            product.InStock -= entity.Quantity;
+            this._productRepository.Update(product);
 
             _context.OrderItems.Add(entity);
             _context.SaveChanges();

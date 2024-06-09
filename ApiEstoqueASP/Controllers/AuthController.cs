@@ -40,7 +40,7 @@ namespace ApiEstoqueASP.Controllers
 
             return CreatedAtAction(
                 null,
-                new { id = readUserDto.Id },
+                null,
                 readUserDto
             );
         }

@@ -47,16 +47,16 @@ namespace ApiEstoqueASP.Services
 
         public async Task SeedUsers()
         {
-            var initialUserExists = await _userManager.FindByEmailAsync("user@localhost");
+            var initialUserExists = await _userManager.FindByEmailAsync("user@email.com");
 
             if(initialUserExists == null)
             {
                 User user = new User();
 
-                user.UserName = "user@localhost";
-                user.Email = "user@localhost";
-                user.NormalizedUserName = "USER@LOCALHOST";
-                user.NormalizedEmail = "USER@LOCALHOST";
+                user.UserName = "user";
+                user.Email = "user@email.com";
+                user.NormalizedUserName = "USER";
+                user.NormalizedEmail = "USER@EMAIL.COM";
                 user.EmailConfirmed = true;
                 user.LockoutEnabled = false;
                 user.SecurityStamp = Guid.NewGuid().ToString();
@@ -69,16 +69,16 @@ namespace ApiEstoqueASP.Services
                 }
             }
 
-            var adminUserExists = await _userManager.FindByEmailAsync("admin@localhost");
+            var adminUserExists = await _userManager.FindByEmailAsync("admin@email.com");
 
             if(adminUserExists == null)
             {
                 User user = new User();
 
-                user.UserName = "admin@localhost";
-                user.Email = "admin@localhost";
-                user.NormalizedUserName = "ADMIN@LOCALHOST";
-                user.NormalizedEmail = "ADMIN@LOCALHOST";
+                user.UserName = "admin";
+                user.Email = "admin@email.com";
+                user.NormalizedUserName = "ADMIN";
+                user.NormalizedEmail = "ADMIN@email.COM";
                 user.EmailConfirmed = true;
                 user.LockoutEnabled = false;
                 user.SecurityStamp = Guid.NewGuid().ToString();

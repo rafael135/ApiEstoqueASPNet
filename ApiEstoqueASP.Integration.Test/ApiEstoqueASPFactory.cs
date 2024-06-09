@@ -1,42 +1,55 @@
 ﻿using ApiEstoqueASP.Data;
-using Microsoft.AspNetCore.Hosting;
+using ApiEstoqueASP.Data.DTOs;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Net;
 
 namespace ApiEstoqueASP.Integration.Test
 {
     // WebApplicationFactory => Classe herdada para configurar uma instancia da API em memória
     public class ApiEstoqueASPFactory : WebApplicationFactory<Program>
     {
-        
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        private IServiceScope _scope;
+
+        public ApiEstoqueDbContext Context { get; private set; }
+        public string? LoggedUserId { get; private set; }
+
+        public ApiEstoqueASPFactory()
         {
-            string connectionString = "Server=localhost;Port=5306;database=ApiEstoque;user=rafael;password=3541;";
-            /*
-            builder.ConfigureServices(services =>
-            {
-                services.RemoveAll(typeof(DbContextOptions<ApiEstoqueDbContext>));
+            this._scope = this.Services.CreateScope();
 
-                services.AddDbContext<ApiEstoqueDbContext>(options =>
-                    options.UseLazyLoadingProxies()
-                    .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-                );
-            });*/
-
-            base.ConfigureWebHost(builder);
+            this.Context = this._scope.ServiceProvider.GetRequiredService<ApiEstoqueDbContext>();
         }
 
-        protected override IHostBuilder? CreateHostBuilder()
+        public async Task<HttpClient> GetHttpClientWithAuthenticationTokenAsync()
         {
-            return base.CreateHostBuilder();
+            HttpClient client = this.CreateClient();
+
+            var data = new LoginUserDto()
+            {
+                Email = "user@email.com",
+                Password = "00000000Teste#"
+            };
+
+
+            HttpResponseMessage response = await client.PostAsJsonAsync("/auth/login", data);
+
+            var result = await response.Content.ReadFromJsonAsync<ReadUserDto>();
+
+            this.LoggedUserId = result!.Id;
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.Token);
+
+            return client;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _scope.Dispose();
+
+            base.Dispose(disposing);
         }
     }
 }

@@ -2,6 +2,7 @@
 using ApiEstoqueASP.Data.DTOs;
 using ApiEstoqueASP.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiEstoqueASP.Controllers
@@ -20,6 +21,7 @@ namespace ApiEstoqueASP.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetSupplier(int id)
         {
@@ -36,6 +38,7 @@ namespace ApiEstoqueASP.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public IActionResult RegisterSupplier([FromBody] CreateSupplierDto dto)
         {
@@ -43,8 +46,6 @@ namespace ApiEstoqueASP.Controllers
 
             this._context.Suppliers.Add(supplier);
             this._context.SaveChanges();
-
-            Console.WriteLine(supplier.RegisterDate);
 
             ReadSupplierDto supplierDto = _mapper.Map<Supplier, ReadSupplierDto>(supplier);
 

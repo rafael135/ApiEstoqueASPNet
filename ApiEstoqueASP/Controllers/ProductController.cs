@@ -26,7 +26,7 @@ namespace ApiEstoqueASP.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult GetProductById(int id)
+        public async Task<IActionResult> GetProductById(int id)
         {
             Product? product = _productService.GetProductById(id);
 
@@ -42,7 +42,7 @@ namespace ApiEstoqueASP.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)] // Para documentação de API. Informa qual o status code de resposta esperado
-        public IActionResult CreateProduct([FromBody] CreateProductDto dto)
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
         {
             Product product = _mapper.Map<Product>(dto);
 

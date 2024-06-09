@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiEstoqueASP.Migrations
 {
     [DbContext(typeof(ApiEstoqueDbContext))]
-    [Migration("20240518021642_initial")]
+    [Migration("20240609020404_initial")]
     partial class initial
     {
         /// <inheritdoc />

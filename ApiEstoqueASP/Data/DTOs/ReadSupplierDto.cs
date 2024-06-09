@@ -12,6 +12,6 @@ namespace ApiEstoqueASP.Data.DTOs
         [DataType(DataType.DateTime)]
         public DateTime RegisterDate { get; set; }
 
-        public virtual ICollection<Product> Products { get; set; }
+        public virtual ICollection<Product>? Products { get; set; }
     }
 }

@@ -21,8 +21,8 @@ namespace ApiEstoqueASP.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "User")]
-        public IActionResult GetOrderItemById(int id)
+        [Authorize]
+        public async Task<IActionResult> GetOrderItemById(int id)
         {
             OrderItem? orderItem = _orderService.GetOrderItemById(id);
 
@@ -35,8 +35,8 @@ namespace ApiEstoqueASP.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "User")]
-        public IActionResult CreateOrderItem([FromBody] CreateOrderItemDto dto)
+        [Authorize]
+        public async Task<IActionResult> CreateOrderItem([FromBody] CreateOrderItemDto dto)
         {
             OrderItem orderItem = _mapper.Map<OrderItem>(dto);
 

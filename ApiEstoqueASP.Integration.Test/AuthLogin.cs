@@ -9,18 +9,24 @@ using System.Text.Json;
 
 namespace ApiEstoqueASP.Integration.Test
 {
-    public class TestAuthLogin : IClassFixture<ApiEstoqueASPFactory>
+    public class AuthLogin : IClassFixture<ApiEstoqueASPFactory>
     {
+
+        private readonly ApiEstoqueASPFactory _app;
+
+        public AuthLogin()
+        {
+            this._app = new ApiEstoqueASPFactory();
+        }
 
         [Fact]
         public async Task POST_Login_Route_Returns_Ok()
         {
             // Arrange
-            var app = new ApiEstoqueASPFactory();
-            HttpClient client = app.CreateClient();
+            HttpClient client = this._app.CreateClient();
             
             var data = new LoginUserDto() {
-                Email = "user@localhost",
+                Email = "user@email.com",
                 Password = "00000000Teste#"
             };
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
@@ -37,8 +43,7 @@ namespace ApiEstoqueASP.Integration.Test
         public async Task POST_Login_Route_Returns_Unauthorized()
         {
             // Arrange
-            var app = new ApiEstoqueASPFactory();
-            HttpClient client = app.CreateClient();
+            HttpClient client = this._app.CreateClient();
             var data = new LoginUserDto()
             {
                 Email = "emailinvalido@test.com",
