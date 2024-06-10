@@ -1,4 +1,5 @@
-﻿using ApiEstoqueASP.Models;
+﻿using ApiEstoqueASP.Data.DTOs;
+using ApiEstoqueASP.Models;
 
 namespace ApiEstoqueASP.Services.Interfaces
 {
@@ -9,5 +10,6 @@ namespace ApiEstoqueASP.Services.Interfaces
         Order RegisterNewOrder(Order order);
         Order GetOrderInfo(int id);
         List<OrderItem> GetOrderItems(Order order);
+        OrderItem? UpdateOrderItem(int id, UpdateOrderItemDto dto);
     }
 }

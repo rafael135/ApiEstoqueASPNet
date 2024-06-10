@@ -4,6 +4,7 @@ using ApiEstoqueASP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,11 +21,10 @@ namespace ApiEstoqueASP.Integration.Test
         }
 
         [Fact]
-        public async Task GET_Order_By_Id_Returns_Order()
+        public async Task GET_Order_By_Id_Returns_Ok()
         {
             // Arrange
             using HttpClient client = await this._app.GetHttpClientWithAuthenticationTokenAsync();
-
             Order? existentOrder = this._app.Context.Orders.FirstOrDefault();
 
             if (existentOrder is null)
@@ -41,11 +41,29 @@ namespace ApiEstoqueASP.Integration.Test
             var res = await client.GetFromJsonAsync<ReadOrderDto>($"/order/{orderId}");
 
 
-
             // Assert
             Assert.NotNull(res);
             Assert.IsType<ReadOrderDto>(res);
             Assert.Equal(existentOrder.TotalPrice, res.TotalPrice);
+        }
+
+
+
+        [Fact]
+        public async Task GET_NonExistent_Order_By_Id_Returns_NotFound()
+        {
+            // Arrange
+            using HttpClient client = await this._app.GetHttpClientWithAuthenticationTokenAsync();
+
+            HttpStatusCode expectedStatus = HttpStatusCode.NotFound;
+
+            // Act
+            var res = await client.GetAsync("/order/98374733");
+
+
+            // Assert
+            Assert.NotNull(res);
+            Assert.Equal(expectedStatus, res.StatusCode);
         }
     }
 }

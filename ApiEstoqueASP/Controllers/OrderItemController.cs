@@ -52,5 +52,20 @@ namespace ApiEstoqueASP.Controllers
                     new { id = orderItem.Id },
                     orderItem);
         }
+
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateOrderItem(int id, [FromBody] UpdateOrderItemDto dto)
+        {
+            OrderItem? order = this._orderService.UpdateOrderItem(id, dto);
+
+            if(order is null)
+            {
+                return NotFound();
+            }
+            
+            return NoContent();
+        }
     }
 }

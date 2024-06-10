@@ -37,25 +37,7 @@ namespace ApiEstoqueASP.Integration.Test
             // Arrange
             using HttpClient client = await this._app.GetHttpClientWithAuthenticationTokenAsync();
 
-            Supplier? existentSupplier = this._app.Context.Suppliers.FirstOrDefault();
-
-            if(existentSupplier is null)
-            {
-                existentSupplier = new SupplierDataBuilder().Generate();
-                this._app.Context.Suppliers.Add(existentSupplier);
-                this._app.Context.SaveChanges();
-            }
-
-            Product? existentProduct = this._app.Context.Products.FirstOrDefault(prod => prod.InStock >= 15);
-            if(existentProduct is null)
-            {
-                existentProduct = new ProductDataBuilder()
-                {
-                    SupplierId = existentSupplier.Id
-                }.Generate();
-                this._app.Context.Products.Add(existentProduct);
-                this._app.Context.SaveChanges();
-            }
+            Product existentProduct = this._app.GetExistentProductOrCreate();
 
             CreateOrderItemDto data = new CreateOrderItemDto()
             {
@@ -65,10 +47,12 @@ namespace ApiEstoqueASP.Integration.Test
             };
             HttpStatusCode expectedResponse = HttpStatusCode.Created;
 
+
             // Act
             HttpResponseMessage res = await client.PostAsJsonAsync("/orderItem", data);
             var bodyResponse = await res.Content.ReadFromJsonAsync<ReadOrderItemDto>();
             this._helper.WriteLine($"{res.Content}");
+
 
             // Assert
             Assert.Equal(expectedResponse, res.StatusCode);

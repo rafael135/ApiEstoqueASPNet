@@ -1,4 +1,5 @@
-﻿using ApiEstoqueASP.Models;
+﻿using ApiEstoqueASP.Data.DTOs;
+using ApiEstoqueASP.Models;
 using ApiEstoqueASP.Repositories.Interfaces;
 using ApiEstoqueASP.Services.Interfaces;
 
@@ -8,11 +9,13 @@ namespace ApiEstoqueASP.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IProductRepository _productRepository;
 
-        public OrderService(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
+        public OrderService(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository, IProductRepository productRepository)
         {
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
+            _productRepository = productRepository;
         }
 
         public OrderItem? GetOrderItemById(int id)
@@ -60,11 +63,38 @@ namespace ApiEstoqueASP.Services
             return order;
         }
 
-        public Order GetOrderInfo(int id)
+        public Order? GetOrderInfo(int id)
         {
-            Order order = _orderRepository.GetById(id);
-
+            Order? order = _orderRepository.GetById(id);
             return order;
+        }
+
+        public OrderItem? UpdateOrderItem(int id, UpdateOrderItemDto dto)
+        {
+            // Obtenho a versão atual no Banco de dados
+            OrderItem? orderItem = _orderItemRepository.GetById(id);
+
+            if(orderItem is null)
+            {
+                return null;
+            }
+
+            if (orderItem.ProductId != dto.ProductId)
+            {
+                Product product = this._productRepository.GetProductById(orderItem.ProductId)!;
+
+                // Reverto o estoque que havia sido alterado
+                product.InStock += orderItem.Quantity;
+                this._productRepository.Update(product);
+            }
+            
+
+            orderItem.Quantity = dto.Quantity;
+            orderItem.ProductId = dto.ProductId;
+            orderItem.OrderId = dto.OrderId;
+
+            this._orderItemRepository.Update(orderItem);
+            return orderItem;
         }
     }
 }

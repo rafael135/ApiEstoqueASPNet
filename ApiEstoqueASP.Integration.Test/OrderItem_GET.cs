@@ -1,5 +1,4 @@
 ﻿using ApiEstoqueASP.Data.DTOs;
-using ApiEstoqueASP.Integration.Test.DataBuilders;
 using ApiEstoqueASP.Models;
 using System.Net;
 using System.Net.Http.Json;
@@ -21,40 +20,7 @@ namespace ApiEstoqueASP.Integration.Test
             // Arrange
             using HttpClient client = await this._app.GetHttpClientWithAuthenticationTokenAsync();
 
-            Product? existentProduct = this._app.Context.Products.FirstOrDefault();
-            if (existentProduct is null)
-            {
-                Supplier? existentSupplier = this._app.Context.Suppliers.FirstOrDefault();
-                if (existentSupplier is null)
-                {
-                    existentSupplier = new SupplierDataBuilder().Generate();
-                    this._app.Context.Suppliers.Add(existentSupplier);
-                    this._app.Context.SaveChanges();
-                }
-
-                existentProduct = new ProductDataBuilder()
-                {
-                    SupplierId = existentSupplier.Id
-                }.Generate();
-
-                this._app.Context.Products.Add(existentProduct);
-                this._app.Context.SaveChanges();
-            }
-
-            OrderItem? existentOrderItem = this._app.Context.OrderItems.FirstOrDefault();
-
-            if (existentOrderItem is null)
-            {
-                existentOrderItem = new OrderItem()
-                {
-                    UserId = this._app.LoggedUserId!,
-                    ProductId = existentProduct.Id,
-                    Quantity = new Random().Next(1, 15),
-                };
-
-                this._app.Context.OrderItems.Add(existentOrderItem);
-                this._app.Context.SaveChanges();
-            }
+            OrderItem existentOrderItem = this._app.GetExistentOrderItemOrCreate();
 
             HttpStatusCode expectedStatus = HttpStatusCode.OK;
 

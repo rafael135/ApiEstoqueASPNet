@@ -1,4 +1,5 @@
 ﻿using ApiEstoqueASP.Data;
+using ApiEstoqueASP.Data.DTOs;
 using ApiEstoqueASP.Models;
 using ApiEstoqueASP.Repositories.Interfaces;
 using ApiEstoqueASP.Services.Interfaces;
@@ -30,6 +31,21 @@ namespace ApiEstoqueASP.Services
             return createdProduct;
         }
 
-        
+        public Product? UpdateProduct(int id, UpdateProductDto dto)
+        {
+            Product? product = this._productRepository.GetProductById(id);
+
+            if(product is null)
+            {
+                return null;
+            }
+
+            product.Name = dto.Name;
+            product.Price = dto.Price;
+
+            this._productRepository.Update(product);
+
+            return product;
+        }
     }
 }

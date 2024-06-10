@@ -4,6 +4,7 @@ using ApiEstoqueASP.Models;
 using ApiEstoqueASP.Services;
 using ApiEstoqueASP.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiEstoqueASP.Controllers
@@ -25,6 +26,7 @@ namespace ApiEstoqueASP.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -41,9 +43,15 @@ namespace ApiEstoqueASP.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)] // Para documentação de API. Informa qual o status code de resposta esperado
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
         {
+            if(dto.Price <= 0)
+            {
+                return BadRequest();
+            }
+
             Product product = _mapper.Map<Product>(dto);
 
             Product newProduct = _productService.CreateNewProduct(product);
@@ -57,6 +65,27 @@ namespace ApiEstoqueASP.Controllers
                 new { id = product.Id },
                 productDto
             );
+        }
+
+
+        [HttpPut("{id}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductDto dto)
+        {
+            if(dto.Price <= 0)
+            {
+                return BadRequest();
+            }
+
+            Product? product = this._productService.UpdateProduct(id, dto);
+
+            if(product is null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }

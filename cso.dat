@@ -46,3 +46,11 @@ V1
 2:Product_POST,NA
 2:Supplier_POST,LU
 2:_output,I
+2:GetExistentOrderItemOrCreateAsync,J
+2:POST_Register_New_Product_Returns_Created,A1
+2:existentSupplier,BP
+2:newProduct,R
+2:data,w
+2:expectedResponse,T
+2:res,RQ
+2:product,r0

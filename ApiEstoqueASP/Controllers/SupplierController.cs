@@ -1,6 +1,7 @@
 ﻿using ApiEstoqueASP.Data;
 using ApiEstoqueASP.Data.DTOs;
 using ApiEstoqueASP.Models;
+using ApiEstoqueASP.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +12,23 @@ namespace ApiEstoqueASP.Controllers
     [Route("[controller]")]
     public class SupplierController : ControllerBase
     {
-        private ApiEstoqueDbContext _context;
+        private readonly ISupplierService _supplierService;
         private IMapper _mapper;
 
-        public SupplierController(ApiEstoqueDbContext context, IMapper mapper)
+        public SupplierController(ISupplierService supplierService, IMapper mapper)
         {
-            _context = context;
+            _supplierService = supplierService;
             _mapper = mapper;
         }
 
         [HttpGet("{id}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetSupplier(int id)
+        public async Task<IActionResult> GetSupplier(int id)
         {
-            Supplier? supplier = _context.Suppliers.FirstOrDefault(sup => sup.Id == id);
+            Supplier? supplier = this._supplierService.GetSupplierById(id);
 
-            if(supplier == null)
+            if(supplier is null)
             {
                 return NotFound(id);
             }
@@ -44,12 +45,9 @@ namespace ApiEstoqueASP.Controllers
         {
             Supplier supplier = _mapper.Map<Supplier>(dto);
 
-            this._context.Suppliers.Add(supplier);
-            this._context.SaveChanges();
+            this._supplierService.CreateNewSupplier(supplier);
 
             ReadSupplierDto supplierDto = _mapper.Map<Supplier, ReadSupplierDto>(supplier);
-
-            
 
             return CreatedAtAction
             (
@@ -60,13 +58,21 @@ namespace ApiEstoqueASP.Controllers
         }
 
 
-        /*
+        
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult UpdateSupplier(int id, [FromBody] UpdateSupplierDto)
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateSupplier(int id, [FromBody] UpdateSupplierDto dto)
         {
+            Supplier? updatedSupplier = this._supplierService.UpdateSupplier(id, dto);
 
+            if(updatedSupplier is null)
+            {
+                return NotFound(id);
+            }
+
+            return NoContent();
         }
-        */
+        
     }
 }

@@ -1,4 +1,6 @@
 ﻿using ApiEstoqueASP.Data.DTOs;
+using ApiEstoqueASP.Integration.Test.DataBuilders;
+using ApiEstoqueASP.Models;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Net.Http.Json;
@@ -22,17 +24,11 @@ namespace ApiEstoqueASP.Integration.Test
             // Arrange
             using var client = await _app.GetHttpClientWithAuthenticationTokenAsync();
 
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "231283123");
-            
-
-            //SupplierDataBuilder supplierDataBuilder = new SupplierDataBuilder();
-
-            //Supplier newSupplier = supplierDataBuilder.Generate();
+            Supplier supplier = new SupplierDataBuilder().Generate();
 
             CreateSupplierDto data = new CreateSupplierDto()
             {
-                Name = "dasdad",
-                //RegisterDate = newSupplier.RegisterDate
+                Name = supplier.Name
             };
             HttpStatusCode expectedResponse = HttpStatusCode.Created;
 
@@ -46,6 +42,52 @@ namespace ApiEstoqueASP.Integration.Test
             Assert.Equal(expectedResponse, res.StatusCode);
             Assert.NotNull(bodyJson);
             Assert.Equal(data.Name, bodyJson.Name);
+        }
+
+
+        [Fact]
+        public async Task POST_Register_New_Supplier_WithNoName_Returns_BadRequest()
+        {
+            // Arrange
+            using var client = await _app.GetHttpClientWithAuthenticationTokenAsync();
+
+            CreateSupplierDto data = new CreateSupplierDto()
+            {
+                Name = ""
+            };
+            HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;
+
+
+            // Act
+            HttpResponseMessage res = await client.PostAsJsonAsync("/supplier", data);
+
+
+            // Assert
+            Assert.NotNull(res);
+            Assert.Equal(expectedResponse, res.StatusCode);
+        }
+
+
+        [Fact]
+        public async Task POST_Register_New_Supplier_WithLongName_Returns_BadRequest()
+        {
+            // Arrange
+            using var client = await _app.GetHttpClientWithAuthenticationTokenAsync();
+
+            CreateSupplierDto data = new CreateSupplierDto()
+            {
+                Name = "dusadhsaudhauihquidhquidhsaudhjauisdhsaiudhauihqwuoehqwueqwuihdasiudhasuidhasudihasduiashdasdsadadasdwqeqw"
+            };
+            HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;
+
+
+            // Act
+            HttpResponseMessage res = await client.PostAsJsonAsync("/supplier", data);
+
+
+            // Assert
+            Assert.NotNull(res);
+            Assert.Equal(expectedResponse, res.StatusCode);
         }
     }
 }

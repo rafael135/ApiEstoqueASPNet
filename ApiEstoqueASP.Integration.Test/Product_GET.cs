@@ -21,26 +21,7 @@ namespace ApiEstoqueASP.Integration.Test
             // Arrange
             using HttpClient client = await this._app.GetHttpClientWithAuthenticationTokenAsync();
 
-            Product? existentProduct = this._app.Context.Products.FirstOrDefault();
-
-            if (existentProduct is null)
-            {
-                Supplier? existentSupplier = this._app.Context.Suppliers.FirstOrDefault();
-
-                if (existentSupplier is null)
-                {
-                    existentSupplier = new SupplierDataBuilder().Generate();
-                    this._app.Context.Suppliers.Add(existentSupplier);
-                    this._app.Context.SaveChanges();
-                }
-
-                existentProduct = new ProductDataBuilder()
-                {
-                    SupplierId = existentSupplier.Id
-                }.Generate();
-                this._app.Context.Products.Add(existentProduct);
-                this._app.Context.SaveChanges();
-            }
+            Product existentProduct = this._app.GetExistentProductOrCreate();
             HttpStatusCode expectedStatus = HttpStatusCode.OK;
 
 
